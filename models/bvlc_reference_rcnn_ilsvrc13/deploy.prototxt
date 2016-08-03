@@ -1,7 +1,7 @@
 name: "R-CNN-ilsvrc13"
 input: "data"
 input_shape {
-  dim: 10
+  dim: 1
   dim: 3
   dim: 227
   dim: 227
