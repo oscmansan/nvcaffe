@@ -186,6 +186,12 @@ void Classifier::WrapInputLayer(std::vector<cv::Mat>* input_channels) {
   }
 }
 
+void show_img(string title, cv::Mat img) {
+  cv::namedWindow(title, CV_WINDOW_AUTOSIZE);
+  cv::imshow(title, img);
+  cv::waitKey();
+}
+
 void Classifier::Preprocess(const cv::Mat& img,
                             std::vector<cv::Mat>* input_channels) {
   /* Convert the input image to the input image format of the network. */

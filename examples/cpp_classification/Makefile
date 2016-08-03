@@ -37,22 +37,25 @@ LDFLAGS += $(foreach librarydir,$(LIBRARY_DIRS),-L$(librarydir)) $(PKG_CONFIG) \
 
 ORIGIN := \$$ORIGIN
 
+#PROGRAM := classification
+PROGRAM := classification_fp16
+
 all: compile run
 
-compile: classification_fp16.bin
+compile: $(PROGRAM).bin
 
 run:
 	sudo LD_LIBRARY_PATH=/usr/local/cuda/lib:../../.build_release/lib \
-	./classification_fp16.bin \
+	./$(PROGRAM).bin \
 	../../models/bvlc_alexnet/deploy.prototxt \
 	../../models/bvlc_alexnet/bvlc_alexnet.caffemodel \
 	../../data/ilsvrc12/imagenet_mean.binaryproto \
 	../../data/ilsvrc12/synset_words.txt \
 	../../examples/images/cat.jpg
 
-classification_fp16.bin: classification_fp16.cpp
+$(PROGRAM).bin: $(PROGRAM).cpp
 	@ echo CXX/LD -o $@
 	$(Q)g++ $< -o $@ $(LINKFLAGS) -l$(LIBRARY_NAME) $(LDFLAGS) -Wl,-rpath,$(ORIGIN)/../../lib
-	
+
 clean:
 	rm *.bin

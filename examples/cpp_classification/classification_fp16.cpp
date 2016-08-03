@@ -214,15 +214,11 @@ void Classifier::Preprocess(const cv::Mat& img,
   else
     sample_resized = sample;
 
-  show_img("image 1", sample_resized);
-
   cv::Mat sample_float;
   if (num_channels_ == 3)
     sample_resized.convertTo(sample_float, CV_16SC3);
   else
     sample_resized.convertTo(sample_float, CV_16SC1);
-  
-  show_img("image 2", sample_float);
 
   cv::Mat sample_normalized;
   cv::subtract(sample_float, mean_, sample_normalized);
