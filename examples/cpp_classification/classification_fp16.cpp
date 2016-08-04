@@ -10,7 +10,6 @@
 #include <string>
 #include <utility>
 #include <vector>
-#include <caffe/util/get.hpp>
 
 #ifdef USE_OPENCV
 using namespace caffe;  // NOLINT(build/namespaces)
