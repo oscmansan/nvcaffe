@@ -11,10 +11,13 @@ void printBinary32(float y) {
 
     string s = bits.to_string<char, std::char_traits<char>, std::allocator<char> >();
 
+    // sign
     cout << s[0];
     cout << " ";
+    // exponent
     for (int i = 1; i <= 8; ++i) cout << s[i];
     cout << " ";
+    // fraction
     for (int i = 9; i <= 31; ++i) cout << s[i];
     cout << endl;
 }
@@ -25,10 +28,13 @@ void printBinary16(float16 y) {
 
     string s = bits.to_string<char, std::char_traits<char>, std::allocator<char> >();
 
+    // sign
     cout << s[0];
     cout << " ";
+    // exponent
     for (int i = 1; i <= 5; ++i) cout << s[i];
     cout << " ";
+    // fraction
     for (int i = 6; i <= 15; ++i) cout << s[i];
     cout << endl;
 }
@@ -43,8 +49,11 @@ int main() {
     float x = 0.00071828182845904523;
     float16 y = Get<float16>(x);
 
-    cout << setprecision(20) << "float32[10]:\t" << x << endl;
-    cout << setprecision(20) << "float16[10]:\t" << y << endl;
+    cout.precision(15);
+    //cout.setf(ios::fixed);
+
+    cout << "float32[10]:\t" << x << endl;
+    cout << "float16[10]:\t" << y << endl;
 
     cout << "float32[2]:\t"; printBinary32(x); 
     cout << "float16[2]:\t"; printBinary16(y);

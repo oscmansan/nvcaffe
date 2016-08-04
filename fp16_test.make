@@ -39,7 +39,7 @@ ORIGIN := \$$ORIGIN
 
 PROGRAM := fp16_test
 
-all: compile
+all: compile run
 
 compile: $(PROGRAM).bin
 
