@@ -149,7 +149,7 @@ void Classifier::SetMean(const string& mean_file) {
   float16* data = mean_blob.mutable_cpu_data();
   for (int i = 0; i < num_channels_; ++i) {
     /* Extract an individual channel. */
-    cv::Mat channel(mean_blob.height(), mean_blob.width(), CV_16S, data);
+    cv::Mat channel(mean_blob.height(), mean_blob.width(), CV_16SC1, data);
     channels.push_back(channel);
     data += mean_blob.height() * mean_blob.width();
   }
@@ -254,7 +254,7 @@ void Classifier::Preprocess(const cv::Mat& img,
   /* This operation will write the separate BGR planes directly to the
    * input layer of the network because it is wrapped by the cv::Mat
    * objects in input_channels. */
-  cv::split(sample_float, *input_channels);
+  cv::split(sample_normalized, *input_channels);
 
   CHECK(reinterpret_cast<float16*>(input_channels->at(0).data)
         == net_->input_blobs()[0]->cpu_data())
