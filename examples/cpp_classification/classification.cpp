@@ -10,10 +10,12 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <fstream>
 
 #ifdef USE_OPENCV
 using namespace caffe;  // NOLINT(build/namespaces)
 using std::string;
+using namespace std;
 
 /* Pair (label, confidence) representing a prediction. */
 typedef std::pair<string, float> Prediction;
@@ -105,6 +107,12 @@ static std::vector<int> Argmax(const std::vector<float>& v, int N) {
 std::vector<Prediction> Classifier::Classify(const cv::Mat& img, int N) {
   std::vector<float> output = Predict(img);
 
+  /*ofstream f("output");
+  for (int i = 0; i < output.size(); ++i) {
+    f << output[i] << endl;
+  }
+  f.close();*/
+
   N = std::min<int>(labels_.size(), N);
   std::vector<int> maxN = Argmax(output, N);
   std::vector<Prediction> predictions;
@@ -136,6 +144,8 @@ void Classifier::SetMean(const string& mean_file) {
     channels.push_back(channel);
     data += mean_blob.height() * mean_blob.width();
   }
+
+  cout << channels[0] << endl;
 
   /* Merge the separate channels into a single image. */
   cv::Mat mean;
@@ -207,11 +217,15 @@ void Classifier::Preprocess(const cv::Mat& img,
   else
     sample = img;
 
+  show_img("sample", sample);
+
   cv::Mat sample_resized;
   if (sample.size() != input_geometry_)
     cv::resize(sample, sample_resized, input_geometry_);
   else
     sample_resized = sample;
+
+  show_img("sample_resized", sample_resized);
 
   cv::Mat sample_float;
   if (num_channels_ == 3)
@@ -219,8 +233,14 @@ void Classifier::Preprocess(const cv::Mat& img,
   else
     sample_resized.convertTo(sample_float, CV_32FC1);
 
+  //cout << sample_float << endl;
+  show_img("sample_float", sample_float/255);
+
   cv::Mat sample_normalized;
   cv::subtract(sample_float, mean_, sample_normalized);
+
+  //cout << sample_normalized << endl;
+  show_img("sample_normalized", sample_normalized/255);
 
   /* This operation will write the separate BGR planes directly to the
    * input layer of the network because it is wrapped by the cv::Mat

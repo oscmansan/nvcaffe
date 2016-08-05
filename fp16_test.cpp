@@ -46,7 +46,7 @@ T Get(const Y& y) {
 
 int main() {
     //float x = 3.14159265358979323846;
-    float x = 0.00071828182845904523;
+    float x = 0.000271828175755218;
     float16 y = Get<float16>(x);
 
     cout.precision(15);
