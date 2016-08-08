@@ -230,15 +230,11 @@ void Classifier::Preprocess(const cv::Mat& img,
   else
     sample = img;
 
-  show_img("sample", sample);
-
   cv::Mat sample_resized;
   if (sample.size() != input_geometry_)
     cv::resize(sample, sample_resized, input_geometry_);
   else
     sample_resized = sample;
-
-  show_img("sample_resized", sample_resized);
 
   cv::Mat sample_float;
   if (num_channels_ == 3)
@@ -246,14 +242,8 @@ void Classifier::Preprocess(const cv::Mat& img,
   else
     sample_resized.convertTo(sample_float, CV_32FC1);
 
-  //cout << sample_float << endl;
-  show_img("sample_float", sample_float/255);
-
   cv::Mat sample_normalized;
   cv::subtract(sample_float, mean_, sample_normalized); 
-
-  //cout << sample_normalized << endl;
-  show_img("sample_normalized", sample_normalized/255);
 
   cv::Mat sample_fp16;
   convertFp16(sample_normalized, sample_fp16);

@@ -145,8 +145,6 @@ void Classifier::SetMean(const string& mean_file) {
     data += mean_blob.height() * mean_blob.width();
   }
 
-  cout << channels[0] << endl;
-
   /* Merge the separate channels into a single image. */
   cv::Mat mean;
   cv::merge(channels, mean);
@@ -217,15 +215,11 @@ void Classifier::Preprocess(const cv::Mat& img,
   else
     sample = img;
 
-  show_img("sample", sample);
-
   cv::Mat sample_resized;
   if (sample.size() != input_geometry_)
     cv::resize(sample, sample_resized, input_geometry_);
   else
     sample_resized = sample;
-
-  show_img("sample_resized", sample_resized);
 
   cv::Mat sample_float;
   if (num_channels_ == 3)
@@ -233,14 +227,8 @@ void Classifier::Preprocess(const cv::Mat& img,
   else
     sample_resized.convertTo(sample_float, CV_32FC1);
 
-  //cout << sample_float << endl;
-  show_img("sample_float", sample_float/255);
-
   cv::Mat sample_normalized;
   cv::subtract(sample_float, mean_, sample_normalized);
-
-  //cout << sample_normalized << endl;
-  show_img("sample_normalized", sample_normalized/255);
 
   /* This operation will write the separate BGR planes directly to the
    * input layer of the network because it is wrapped by the cv::Mat
