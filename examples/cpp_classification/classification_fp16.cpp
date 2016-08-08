@@ -130,31 +130,20 @@ void Classifier::SetMean(const string& mean_file) {
   ReadProtoFromBinaryFileOrDie(mean_file.c_str(), &blob_proto);
 
   /* Convert from BlobProto to Blob<float> */
-  Blob<float16,CAFFE_FP16_MTYPE> mean_blob;
+  Blob<float,float> mean_blob;
   mean_blob.FromProto(blob_proto);
   CHECK_EQ(mean_blob.channels(), num_channels_)
     << "Number of channels of mean file doesn't match input layer.";
 
-  const float16* const_data = mean_blob.cpu_data();
-  for (int i = 0; i < mean_blob.height(); ++i) {
-    cout << "  " << const_data[i*mean_blob.width()];
-    for (int j = 1; j < mean_blob.width(); ++j) {
-      cout << ", " << const_data[i*mean_blob.width()+j];
-    }
-    cout << ";" << endl;
-  }
-
   /* The format of the mean file is planar 32-bit float BGR or grayscale. */
   std::vector<cv::Mat> channels;
-  float16* data = mean_blob.mutable_cpu_data();
+  float* data = mean_blob.mutable_cpu_data();
   for (int i = 0; i < num_channels_; ++i) {
     /* Extract an individual channel. */
-    cv::Mat channel(mean_blob.height(), mean_blob.width(), CV_16SC1, data);
+    cv::Mat channel(mean_blob.height(), mean_blob.width(), CV_32FC1, data);
     channels.push_back(channel);
     data += mean_blob.height() * mean_blob.width();
   }
-
-  //cout << channels[0] << endl;
 
   /* Merge the separate channels into a single image. */
   cv::Mat mean;
@@ -209,7 +198,22 @@ void show_img(string title, cv::Mat img) {
   cv::namedWindow(title, CV_WINDOW_AUTOSIZE);
   cv::imshow(title, img);
   cv::waitKey();
-} 
+}
+
+void convertFp16(const cv::Mat& src, cv::Mat& dst) {
+  int rows = src.rows;
+  int cols = src.cols;
+  int channels = src.channels();
+ 
+  dst = cv::Mat(rows,cols,CV_16SC3);
+  for (int i = 0; i < rows; ++i) {
+    const float* src_row = src.ptr<float>(i);
+    float16* dst_row = dst.ptr<float16>(i);
+    for (int j = 0; j < cols*channels; ++j) {
+      dst_row[j] = (float16) src_row[j];
+    }
+  }
+} 	
 
 void Classifier::Preprocess(const cv::Mat& img,
                             std::vector<cv::Mat>* input_channels) {
@@ -238,23 +242,26 @@ void Classifier::Preprocess(const cv::Mat& img,
 
   cv::Mat sample_float;
   if (num_channels_ == 3)
-    sample_resized.convertTo(sample_float, CV_16SC3);
+    sample_resized.convertTo(sample_float, CV_32FC3);
   else
-    sample_resized.convertTo(sample_float, CV_16SC1);
+    sample_resized.convertTo(sample_float, CV_32FC1);
 
   //cout << sample_float << endl;
-  show_img("sample_float", (sample_float-128)*256);
+  show_img("sample_float", sample_float/255);
 
   cv::Mat sample_normalized;
-  cv::subtract(sample_float, mean_, sample_normalized);
+  cv::subtract(sample_float, mean_, sample_normalized); 
 
   //cout << sample_normalized << endl;
-  show_img("sample_normalized", (sample_normalized-128)*256);
+  show_img("sample_normalized", sample_normalized/255);
+
+  cv::Mat sample_fp16;
+  convertFp16(sample_normalized, sample_fp16);
 
   /* This operation will write the separate BGR planes directly to the
    * input layer of the network because it is wrapped by the cv::Mat
    * objects in input_channels. */
-  cv::split(sample_normalized, *input_channels);
+  cv::split(sample_fp16, *input_channels);
 
   CHECK(reinterpret_cast<float16*>(input_channels->at(0).data)
         == net_->input_blobs()[0]->cpu_data())
