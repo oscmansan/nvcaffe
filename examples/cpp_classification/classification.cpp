@@ -263,7 +263,13 @@ int main(int argc, char** argv) {
 
   cv::Mat img = cv::imread(file, -1);
   CHECK(!img.empty()) << "Unable to decode image " << file;
+
+  Timer timer;
+  timer.Start();
   std::vector<Prediction> predictions = classifier.Classify(img);
+  timer.Stop();
+  float t = timer.MicroSeconds();
+  cout << "--> " << t*1e-6 << "s" <<  endl;
 
   /* Print the top N predictions. */
   for (size_t i = 0; i < predictions.size(); ++i) {

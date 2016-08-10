@@ -206,12 +206,11 @@ void convertFp16(const cv::Mat& src, cv::Mat& dst) {
   int channels = src.channels();
  
   dst = cv::Mat(rows,cols,CV_16SC3);
-  for (int i = 0; i < rows; ++i) {
-    const float* src_row = src.ptr<float>(i);
-    float16* dst_row = dst.ptr<float16>(i);
-    for (int j = 0; j < cols*channels; ++j) {
-      dst_row[j] = (float16) src_row[j];
-    }
+
+  const float* src_ptr = (float*) src.data;
+  float16* dst_ptr = (float16*) dst.data;
+  for (unsigned int i = 0; i < rows*cols*channels; ++i) {
+    *dst_ptr++ = (float16) *src_ptr++;
   }
 } 	
 
@@ -266,6 +265,10 @@ int main(int argc, char** argv) {
     return 1;
   }
 
+  #if NATIVE_FP16
+    cout << "Running NATIVE_FP16" << endl;
+  #endif
+
   ::google::InitGoogleLogging(argv[0]);
 
   string model_file   = argv[1];
@@ -281,7 +284,13 @@ int main(int argc, char** argv) {
 
   cv::Mat img = cv::imread(file, -1);
   CHECK(!img.empty()) << "Unable to decode image " << file;
+ 
+  Timer timer;
+  timer.Start();
   std::vector<Prediction> predictions = classifier.Classify(img);
+  timer.Stop();
+  float t = timer.MicroSeconds();
+  cout << "--> " << t*1e-6 << "s" <<  endl;
 
   /* Print the top N predictions. */
   for (size_t i = 0; i < predictions.size(); ++i) {
