@@ -35,7 +35,7 @@
 // <float16,float16> for ARM
 
 // --> Makefile.config
-//#define NATIVE_FP16 1
+#define NATIVE_FP16 1
 
 #if NATIVE_FP16
 # define CAFFE_FP16_MTYPE float16

@@ -37,7 +37,7 @@ LDFLAGS += $(foreach librarydir,$(LIBRARY_DIRS),-L$(librarydir)) $(PKG_CONFIG) \
 
 ORIGIN := \$$ORIGIN
 
-all: classification_fp16.bin
+all: classification.bin classification_fp16.bin
 
 classification.bin: classification.cpp
 	@ echo CXX/LD -o $@

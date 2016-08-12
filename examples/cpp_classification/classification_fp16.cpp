@@ -264,10 +264,10 @@ int main(int argc, char** argv) {
               << " mean.binaryproto labels.txt img.jpg" << std::endl;
     return 1;
   }
-
-  #if NATIVE_FP16
-    cout << "Running NATIVE_FP16" << endl;
-  #endif
+  
+  #define STR_VALUE(arg)      #arg
+  #define GET_STR_VALUE(name) STR_VALUE(name)
+  cout << "CAFFE_FP16_MTYPE = " << GET_STR_VALUE(CAFFE_FP16_MTYPE) << endl;
 
   ::google::InitGoogleLogging(argv[0]);
 

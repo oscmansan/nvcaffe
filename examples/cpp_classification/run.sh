@@ -8,15 +8,15 @@ fi
 #INPUT=../../../inputs/ILSVRC2012_val_00000043.JPEG
 #INPUT=../../../inputs/ILSVRC2012_val_00047590.JPEG
 #INPUT=../../../inputs/ILSVRC2012_val_00041206.JPEG
-#INPUT=../../../inputs/ILSVRC2012_val_00027276.JPEG
+INPUT=../../../inputs/ILSVRC2012_val_00027276.JPEG
 #INPUT=../../../inputs/ILSVRC2012_val_00014184.JPEG
 #INPUT=../../../inputs/ILSVRC2012_val_00016434.JPEG
 #INPUT=../../../inputs/ILSVRC2012_val_00028337.JPEG
 #INPUT=../../../inputs/ILSVRC2012_val_00038283.JPEG
-INPUT=../../../inputs/ILSVRC2012_val_00047965.JPEG
+#INPUT=../../../inputs/ILSVRC2012_val_00047965.JPEG
 
-#MODEL=bvlc_alexnet
-MODEL=bvlc_reference_caffenet
+MODEL=bvlc_alexnet
+#MODEL=bvlc_reference_caffenet
 #MODEL=bvlc_googlenet
 
 make $PROGRAM.bin
