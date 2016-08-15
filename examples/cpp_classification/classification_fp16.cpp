@@ -212,7 +212,7 @@ void convertFp16(const cv::Mat& src, cv::Mat& dst) {
   for (unsigned int i = 0; i < rows*cols*channels; ++i) {
     *dst_ptr++ = (float16) *src_ptr++;
   }
-} 	
+}	
 
 void Classifier::Preprocess(const cv::Mat& img,
                             std::vector<cv::Mat>* input_channels) {
