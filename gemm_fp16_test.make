@@ -44,7 +44,7 @@ all: compile run
 compile: $(PROGRAM).bin
 
 run:
-	sudo LD_LIBRARY_PATH=/usr/local/cuda/lib:.build_release/lib ./$(PROGRAM).bin
+	sudo LD_LIBRARY_PATH=/usr/local/cuda/lib:.build_release/lib ./$(PROGRAM).bin 500
 
 $(PROGRAM).bin: $(PROGRAM).cpp
 	@ echo CXX/LD -o $@

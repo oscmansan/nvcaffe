@@ -14,11 +14,18 @@ void init_mat(float16 *A, const int M, const int N) {
     }
 }
 
+void usage(string prog) {
+    printf("Usage: %s SIZE", prog.c_str());
+    exit(1);
+}
 
-int main() {
-    const int M = 300;
-    const int N = 300;
-    const int K = 300;
+int main(int argc, char* argv[]) {
+    if (argc != 2) usage(argv[0]);
+    const int SIZE = atoi(argv[1]);
+
+    const int M = SIZE;
+    const int N = SIZE;
+    const int K = SIZE;
 
     float16 *h_A = (float16*)malloc(M*K*sizeof(float16));
     float16 *h_B = (float16*)malloc(K*N*sizeof(float16));
@@ -56,7 +63,7 @@ int main() {
     cudaDeviceSynchronize();
     clock_gettime(CLOCK_REALTIME, &end);
     elapsed = (end.tv_sec*1e9+end.tv_nsec)-(start.tv_sec*1e9+start.tv_nsec);
-    cout << "<float16,float> " <<  elapsed << " ns" << endl;
+    printf("%-18s %10ld ns\n", "<float16,float>", elapsed);
 
 
     const float16 alpha_fp16 = (float16)1.;
@@ -69,7 +76,7 @@ int main() {
     cudaDeviceSynchronize();
     clock_gettime(CLOCK_REALTIME, &end);
     elapsed = (end.tv_sec*1e9+end.tv_nsec)-(start.tv_sec*1e9+start.tv_nsec);
-    cout << "<float16,float16> " <<  elapsed << " ns" << endl;
+    printf("%-18s %10ld ns\n", "<float16,float16>", elapsed);
 
     cublasDestroy(handle);
     cudaFree(d_A);
