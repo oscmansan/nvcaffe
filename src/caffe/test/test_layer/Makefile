@@ -1,9 +1,9 @@
-BUILD_DIR := ../../build
+BUILD_DIR := ../../../../build
 CUDA_DIR := /usr/local/cuda
 
 BUILD_INCLUDE_DIR := $(BUILD_DIR)/src
 THIRDPARTY_DIR=$(PROJECT_DIR)/3rdparty
-INCLUDE_DIRS += $(BUILD_INCLUDE_DIR) ../../src ../../include $(THIRDPARTY_DIR)
+INCLUDE_DIRS += $(BUILD_INCLUDE_DIR) ../../../../src ../../../../include $(THIRDPARTY_DIR)
 CUDA_INCLUDE_DIR := $(CUDA_DIR)/include
 INCLUDE_DIRS += $(CUDA_INCLUDE_DIR)
 CNMEM_DIR=${THIRDPARTY_DIR}/cnmem
@@ -37,13 +37,9 @@ LDFLAGS += $(foreach librarydir,$(LIBRARY_DIRS),-L$(librarydir)) $(PKG_CONFIG) \
 
 ORIGIN := \$$ORIGIN
 
-all: classification.bin classification_fp16.bin
+all: test_layer.bin
 
-classification.bin: classification.cpp
-	@ echo CXX/LD -o $@
-	$(Q)g++ $< -o $@ $(LINKFLAGS) -l$(LIBRARY_NAME) $(LDFLAGS) -Wl,-rpath,$(ORIGIN)/../../lib
-
-classification_fp16.bin: classification_fp16.cpp
+test_layer.bin: test_layer.cpp
 	@ echo CXX/LD -o $@
 	$(Q)g++ $< -o $@ $(LINKFLAGS) -l$(LIBRARY_NAME) $(LDFLAGS) -Wl,-rpath,$(ORIGIN)/../../lib
 

@@ -1,18 +1,24 @@
 #include <vector>
+#include <string>
+using namespace std;
 
+#include "caffe/blob.hpp"
 #include "caffe/vision_layers.hpp"
-#include "caffe/util/upgrade_proto.hpp"
+#include "caffe/proto/caffe.pb.h"
+#include "caffe/util/io.hpp"
+#include "caffe/util/get.hpp"
+using namespace caffe;
 
-#define Dtype float16
-#define Mtype float16
 
 int main() {
     string param_file = "conv_layer.prototxt";
     LayerParameter param;
-    ReadNetParamsFromTextFileOrDie(param_file, &param);
-    ConvolutionLayer<Dtype,Mtype> layer(param);
+    if (!ReadProtoFromTextFile(param_file, &param))
+        cout << "Failed to parse LayerParameter file: " << param_file << endl;
+    ConvolutionLayer<float16,float16> layer(param);
+    cout << layer.type() << endl;
 
-    vector<Blob<Dtype,Mtype>*> bottom;
-    vector<Blob<Dtype,Mtype>*> top;
-    layer.Forward_cpu(bottom, top);
+    vector<Blob<float16,float16>*> bottom;
+    vector<Blob<float16,float16>*> top;
+    layer.Forward(bottom, top);
 }
