@@ -32,17 +32,16 @@ void print_blob(Blob<float16,float16>* blob) {
 void init_blob(Blob<float16,float16>* blob) {
     float16* data = blob->mutable_cpu_data();
     for (int i = 0; i < blob->count(); ++i) {
-        //data[i] = static_cast<float16>(rand()) / static_cast<float16>(RAND_MAX/1000.);
-        data[i] = float16(rand() % 1000);
+        data[i] = Get<float16>(float(rand())/float(RAND_MAX));
     }
 }
 
 
 int main() {
     vector<Blob<float16,float16>*> bottom;
-    Blob<float16,float16>* bottom_blob = new Blob<float16,float16>(2, 3, 7, 5);
-    FillerParameter filler_param;
-    filler_param.set_value(1.);
+    Blob<float16,float16>* bottom_blob = new Blob<float16,float16>(1, 1, 7, 5);
+    //FillerParameter filler_param;
+    //filler_param.set_value(1.);
     //GaussianFiller<float16,float16> filler(filler_param);
     //filler.Fill(bottom_blob); print_blob(bottom_blob);
     init_blob(bottom_blob); print_blob(bottom_blob);
@@ -57,14 +56,16 @@ int main() {
     conv_param->add_kernel_size(3);
     conv_param->add_stride(2);
     conv_param->set_num_output(4); // number of filters
-    conv_param->mutable_weight_filler()->set_type("gaussian");
+    conv_param->mutable_weight_filler()->set_type("gaussian"); // type of filters
+    conv_param->mutable_bias_filler()->set_type("constant");
+    conv_param->mutable_bias_filler()->set_value(0.1);
     
     shared_ptr<Layer<float16,float16> > layer(new ConvolutionLayer<float16,float16>(layer_param));
     layer->SetUp(bottom,top);
     
     print_shape(top_blob);
     //EXPECT_EQ(top_blob->num(), 2);
-    assert(top_blob->num() == 2);
+    assert(top_blob->num() == 1);
     //EXPECT_EQ(top_blob->channels(), 4);
     assert(top_blob->channels() == 4);
     //EXPECT_EQ(top_blob->height(), 3);
