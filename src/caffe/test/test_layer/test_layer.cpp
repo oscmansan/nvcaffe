@@ -1,3 +1,4 @@
+#include <iostream>
 #include <vector>
 #include <string>
 using namespace std;
@@ -23,16 +24,24 @@ void print_shape(Blob<float16,float16>* blob) {
 }
 
 void print_blob(Blob<float16,float16>* blob) {
+    cout << "[" << blob->count() << "]" << endl;
     const float16* data = blob->cpu_data();
     for (int i = 0; i < blob->count(); ++i)
         cout << data[i] << " ";
     cout << endl;
 }
 
-void init_blob(Blob<float16,float16>* blob) {
+void init_rand(Blob<float16,float16>* blob) {
     float16* data = blob->mutable_cpu_data();
     for (int i = 0; i < blob->count(); ++i) {
         data[i] = Get<float16>(float(rand())/float(RAND_MAX));
+    }
+}
+
+void init_ones(Blob<float16,float16>* blob) {
+    float16* data = blob->mutable_cpu_data();
+    for (int i = 0; i < blob->count(); ++i) {
+        data[i] = Get<float16>(1.);
     }
 }
 
@@ -44,7 +53,7 @@ int main() {
     //filler_param.set_value(1.);
     //GaussianFiller<float16,float16> filler(filler_param);
     //filler.Fill(bottom_blob); print_blob(bottom_blob);
-    init_blob(bottom_blob); print_blob(bottom_blob);
+    init_rand(bottom_blob); print_blob(bottom_blob);
     bottom.push_back(bottom_blob);
 
     vector<Blob<float16,float16>*> top;
@@ -57,11 +66,12 @@ int main() {
     conv_param->add_stride(2);
     conv_param->set_num_output(4); // number of filters
     conv_param->mutable_weight_filler()->set_type("gaussian"); // type of filters
-    conv_param->mutable_bias_filler()->set_type("constant");
-    conv_param->mutable_bias_filler()->set_value(0.1);
-    
+
     shared_ptr<Layer<float16,float16> > layer(new ConvolutionLayer<float16,float16>(layer_param));
     layer->SetUp(bottom,top);
+
+    Blob<float16,float16>* weights = layer->blobs()[0].get();
+    init_ones(weights); print_blob(weights);
     
     print_shape(top_blob);
     //EXPECT_EQ(top_blob->num(), 2);
