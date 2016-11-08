@@ -41,11 +41,11 @@ all: classification.bin classification_fp16.bin
 
 classification.bin: classification.cpp
 	@ echo CXX/LD -o $@
-	$(Q)g++ $< -o $@ $(LINKFLAGS) -l$(LIBRARY_NAME) $(LDFLAGS) -Wl,-rpath,$(ORIGIN)/../../lib
+	$(Q)g++ -g $< -o $@ $(LINKFLAGS) -l$(LIBRARY_NAME) $(LDFLAGS) -Wl,-rpath,$(ORIGIN)/../../lib
 
 classification_fp16.bin: classification_fp16.cpp
 	@ echo CXX/LD -o $@
-	$(Q)g++ $< -o $@ $(LINKFLAGS) -l$(LIBRARY_NAME) $(LDFLAGS) -Wl,-rpath,$(ORIGIN)/../../lib
+	$(Q)g++ -g $< -o $@ $(LINKFLAGS) -l$(LIBRARY_NAME) $(LDFLAGS) -Wl,-rpath,$(ORIGIN)/../../lib
 
 clean:
 	rm *.bin
