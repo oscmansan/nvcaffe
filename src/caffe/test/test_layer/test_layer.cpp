@@ -31,6 +31,8 @@ public:
         conv_param->add_kernel_size(3);
         conv_param->add_stride(2);
         conv_param->set_num_output(4); // number of filters
+        conv_param->mutable_weight_filler()->set_type("constant"); // type of filters
+        conv_param->mutable_weight_filler()->set_value(1.0);
 
         // Create layer
         std::shared_ptr<Layer<float16,float16> > layer(new ConvolutionLayer<float16,float16>(layer_param));
@@ -41,9 +43,7 @@ public:
         assert(top_blob->height() == 3);
         assert(top_blob->width() == 2);
 
-        // Set up convolution filters
         Blob<float16,float16>* weights = layer->blobs()[0].get();
-        init_ones(weights);
         print_blob(weights);
 
         // Run forward pass
